@@ -1,0 +1,57 @@
+# common-inject-values.yaml
+
+parameters:
+  adoServiceConnection: ''
+  cluster: ''
+
+steps:
+
+#================================================================================================
+# Inject Values
+#================================================================================================
+
+- task: AzureCLI@2
+  displayName: Inject Values
+  inputs:
+    azureSubscription: ${{ parameters.adoServiceConnection }}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      # selfsigned
+
+      echo "Injecting variables into kustomize/overlays/1-selfsigned/2-cluster-issuer-ss.yaml ..."
+      echo
+      sed -i "s|__environment__|$(environment)|g" kustomize/overlays/1-selfsigned/2-cluster-issuer-ss.yaml
+      sed -i "s|__cluster__|${{ parameters.cluster }}|g" kustomize/overlays/1-selfsigned/2-cluster-issuer-ss.yaml
+      cat kustomize/overlays/1-selfsigned/2-cluster-issuer-ss.yaml
+      echo
+
+      echo "Injecting variables into kustomize/overlays/1-selfsigned/patch-3-gateway.yaml ..."
+      echo
+      subscriptionId=$(az account show --query id -o tsv)
+      sed -i "s|__subscription-id__|$subscriptionId|g" kustomize/overlays/1-selfsigned/patch-3-gateway.yaml
+      sed -i "s|__environment__|$(environment)|g" kustomize/overlays/1-selfsigned/patch-3-gateway.yaml
+      sed -i "s|__location__|$(location)|g" kustomize/overlays/1-selfsigned/patch-3-gateway.yaml
+      sed -i "s|__cluster__|${{ parameters.cluster }}|g" kustomize/overlays/1-selfsigned/patch-3-gateway.yaml
+      cat kustomize/overlays/1-selfsigned/patch-3-gateway.yaml
+      echo
+
+      # acme
+
+      echo "Injecting variables into kustomize/overlays/2-acme/4-cluster-issuer-acme.yaml ..."
+      echo
+      sed -i "s|__environment__|$(environment)|g" kustomize/overlays/2-acme/4-cluster-issuer-acme.yaml
+      sed -i "s|__cluster__|${{ parameters.cluster }}|g" kustomize/overlays/2-acme/4-cluster-issuer-acme.yaml
+      cat kustomize/overlays/2-acme/4-cluster-issuer-acme.yaml
+      echo
+
+      echo "Injecting variables into kustomize/overlays/2-acme/patch-3-gateway.yaml ..."
+      echo
+      subscriptionId=$(az account show --query id -o tsv)
+      sed -i "s|__subscription-id__|$subscriptionId|g" kustomize/overlays/2-acme/patch-3-gateway.yaml
+      sed -i "s|__environment__|$(environment)|g" kustomize/overlays/2-acme/patch-3-gateway.yaml
+      sed -i "s|__location__|$(location)|g" kustomize/overlays/2-acme/patch-3-gateway.yaml
+      sed -i "s|__cluster__|${{ parameters.cluster }}|g" kustomize/overlays/2-acme/patch-3-gateway.yaml
+      cat kustomize/overlays/2-acme/patch-3-gateway.yaml
+      echo

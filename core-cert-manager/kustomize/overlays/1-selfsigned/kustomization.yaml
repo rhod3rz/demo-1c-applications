@@ -1,0 +1,16 @@
+# overlays/1-selfsigned/kustomization.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  - 2-cluster-issuer-ss.yaml
+
+patches:
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: Gateway
+      name: gw-rhod3rz-com
+    path: patch-3-gateway.yaml

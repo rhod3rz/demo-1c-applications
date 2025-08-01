@@ -1,0 +1,43 @@
+# base/3-gateway.yaml
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gw-rhod3rz-com
+  namespace: ns-rhod3rz-com
+  annotations:
+    alb.networking.azure.io/alb-id: xxx # << updated via kustomization.yaml.
+spec:
+  gatewayClassName: azure-alb-external
+  listeners:
+  - name: listener-http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: listener-mango-cart
+    hostname: xxx # << updated via kustomization.yaml.
+    port: 443
+    protocol: HTTPS
+    tls:
+      certificateRefs:
+      - name: secret-mango-cart
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: listener-mango-catalog
+    hostname: xxx # << updated via kustomization.yaml.
+    port: 443
+    protocol: HTTPS
+    tls:
+      certificateRefs:
+      - name: secret-mango-catalog
+    allowedRoutes:
+      namespaces:
+        from: All
+  addresses:
+  - type: alb.networking.azure.io/alb-frontend
+    value: "rhod3rz-com" # the name of the frontend in the azure portal.
+---

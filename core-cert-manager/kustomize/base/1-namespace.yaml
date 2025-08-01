@@ -1,0 +1,11 @@
+# base/1-namespace.yaml
+
+# This namespace is used to hold the shared gateway for the rhod3rz.com domain.
+# The gateway is created here so its application agnostic and can serve multiple applications within the same cluster
+# e.g. mango and titan.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ns-rhod3rz-com
+---

@@ -1,0 +1,52 @@
+# overlays/2-acme/4-cluster-issuer-acme.yaml
+
+# NOTE: Self-signed certs MUST be created for any https listener in gateway.yaml, before the valid cert is available.
+# This is because if no valid cert exists when the 'gateway' is deployed, it will provision with errors and prevent the acme pod from working.
+# This allows the 'gateway' to deploy succesfully and the acme pod do its thing to pull down a proper cert, which overwrites the self-signed ones.
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cli-letsencrypt-acme
+spec:
+  acme:
+    # server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: rhod3rz@outlook.com
+    privateKeySecretRef:
+      name: pksr-letsencrypt
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: gw-rhod3rz-com
+                namespace: ns-rhod3rz-com
+                kind: Gateway
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-mango-cart
+  namespace: ns-rhod3rz-com # << the cert must exist in the same namespace as the gateway!
+spec:
+  secretName: secret-mango-cart
+  issuerRef:
+    name: cli-letsencrypt-acme
+    kind: ClusterIssuer
+  dnsNames:
+    - agfc.__environment__.__cluster__.mango.cart.rhod3rz.com # << updated via pipeline.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-mango-catalog
+  namespace: ns-rhod3rz-com # << the cert must exist in the same namespace as the gateway!
+spec:
+  secretName: secret-mango-catalog
+  issuerRef:
+    name: cli-letsencrypt-acme
+    kind: ClusterIssuer
+  dnsNames:
+    - agfc.__environment__.__cluster__.mango.catalog.rhod3rz.com # << updated via pipeline.
+---
+# when new applications come along ... add new certs here following the format above :-)

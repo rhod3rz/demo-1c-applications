@@ -1,0 +1,39 @@
+# build.yaml
+
+parameters:
+  vmImageName: ''
+  adoServiceConnection: ''
+
+jobs:
+
+#================================================================================================
+# Build & Push To ACR
+#================================================================================================
+
+- job: buildAndPushToAcr
+  displayName: Build
+
+  pool:
+    vmImage: ${{ parameters.vmImageName }}
+
+  steps:
+
+    # Update messageStatic.txt with app name and tag.
+    - script: |
+        echo "$(appName):$(appTag)" >> src/messageStatic.txt
+        cat src/messageStatic.txt
+      displayName: Tag Homepage
+
+    # Run docker build tasks.
+    - task: AzureCLI@2
+      displayName: Docker - Build
+      inputs:
+        azureSubscription: ${{ parameters.adoServiceConnection }}
+        scriptType: bash
+        scriptLocation: inlineScript
+        failOnStandardError: false
+        inlineScript: |
+          az acr login --name $(acrName)
+          docker build -t $(acrHost)/$(appName):$(appTag) src/.
+          docker images
+          docker push $(acrHost)/$(appName):$(appTag)

@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/hostnames/0
+  value: agfc.__environment__.__cluster__.mango.catalog.rhod3rz.com

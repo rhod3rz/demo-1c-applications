@@ -1,0 +1,26 @@
+# 1-build.yaml
+
+trigger: none
+pr: none
+
+stages:
+
+- stage: build
+  displayName: Build
+
+  # Variables are evaluated at runtime and automatically pass through to template files.
+  # They are simpler to use but cannot be used in compile time conditionals.
+  variables:
+    # acr
+    acrName: 'acrprdrhod3rz'            # the acr name.
+    acrHost: 'acrprdrhod3rz.azurecr.io' # the acr fqdn.
+    appName: 'mango-cart'               # the app / image name.
+    appTag:  $(Build.BuildNumber)       # the app / image tag.
+
+  jobs:
+  - template: templates/build.yaml
+    # Parameters are evaluated at compile time and cannot be changed at runtime.
+    # They must be explicitly passed to template files and are required for conditional logic.
+    parameters:
+      vmImageName:          'ubuntu-latest' # the ado agent image you want to use.
+      adoServiceConnection: 'appl_prd_01'   # the ado service connection to use.

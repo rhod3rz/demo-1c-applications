@@ -1,0 +1,17 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: rt-catalog
+  namespace: ns-mango
+spec:
+  parentRefs:
+  - name: gw-rhod3rz-com
+    namespace: ns-rhod3rz-com
+  hostnames:
+  - xxx # << updated via kustomization.yaml.
+  rules:
+  - backendRefs:
+    - name: svc-catalog
+      port: 80
+---

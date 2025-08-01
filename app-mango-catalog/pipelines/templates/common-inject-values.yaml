@@ -1,0 +1,34 @@
+# common-inject-values.yaml
+
+parameters:
+  adoServiceConnection: ''
+  cluster: ''
+  tag: ''
+
+steps:
+
+#================================================================================================
+# Inject Values
+#================================================================================================
+
+- task: AzureCLI@2
+  displayName: Inject Values
+  inputs:
+    azureSubscription: ${{ parameters.adoServiceConnection }}
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      echo "Injecting variables into kustomize/overlays/patch-1-deployment.yaml ..."
+      echo
+      sed -i "s|__environment__|$(environment)|g" kustomize/overlays/patch-1-deployment.yaml
+      sed -i "s|__tag__|${{ parameters.tag }}|g" kustomize/overlays/patch-1-deployment.yaml
+      cat kustomize/overlays/patch-1-deployment.yaml
+      echo
+
+      echo "Injecting variables into kustomize/overlays/patch-3-route.yaml ..."
+      echo
+      sed -i "s|__environment__|$(environment)|g" kustomize/overlays/patch-3-route.yaml
+      sed -i "s|__cluster__|${{ parameters.cluster }}|g" kustomize/overlays/patch-3-route.yaml
+      cat kustomize/overlays/patch-3-route.yaml
+      echo

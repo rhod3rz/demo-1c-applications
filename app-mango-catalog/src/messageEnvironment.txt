@@ -1,0 +1,8 @@
+
+🧩 The Micro Service = $RDZ_MICRO_SERVICE
+
+🔐 The Key Vault Secret = $RDZ_TEST_SECRET
+
+🌍 The Public IP Address = $PUBLIC_IP
+
+💻 The Pod Name = $HOSTNAME

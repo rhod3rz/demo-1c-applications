@@ -1,0 +1,13 @@
+# overlays/2-acme/patch-3-gateway.yaml
+
+- op: replace
+  path: /metadata/annotations/alb.networking.azure.io~1alb-id
+  value: /subscriptions/__subscription-id__/resourceGroups/rg-__environment__-__location__-aks/providers/Microsoft.ServiceNetworking/trafficControllers/agfc-__environment__-__location__-__cluster__
+
+- op: replace
+  path: /spec/listeners/1/hostname
+  value: agfc.__environment__.__cluster__.mango.cart.rhod3rz.com
+
+- op: replace
+  path: /spec/listeners/2/hostname
+  value: agfc.__environment__.__cluster__.mango.catalog.rhod3rz.com
